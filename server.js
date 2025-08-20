@@ -5,12 +5,20 @@ import OpenAI from "openai"
 
 dotenv.config()
 
+// 檢查 API Key
+if (!process.env.OPENAI_API_KEY) {
+  console.error("❌ 沒有找到 OPENAI_API_KEY，請確認 .env 檔案正確")
+  process.exit(1)
+} else {
+  console.log("✅ API KEY prefix:", process.env.OPENAI_API_KEY.slice(0, 10))
+}
+
 const app = express()
-const port = 8000
+const port = 8000 // <-- 改這裡
 app.use(bodyParser.json())
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 })
 
 app.post("/mcp/expand-tasks", async (req, res) => {
@@ -34,20 +42,28 @@ app.post("/mcp/expand-tasks", async (req, res) => {
 
   try {
     const llmResponse = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }]
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
     })
 
     const raw = llmResponse.choices[0].message.content
-    const cards = JSON.parse(raw)
+    console.log("📝 LLM raw output:", raw)
+
+    let cards = []
+    try {
+      cards = JSON.parse(raw)
+    } catch (e) {
+      console.error("⚠️ JSON parse error:", e.message)
+      return res.status(500).json({ error: "Invalid JSON from LLM", raw })
+    }
 
     res.json({ cards })
   } catch (err) {
-    console.error("Expand error:", err)
-    res.status(500).json({ error: "Failed to expand tasks" })
+    console.error("❌ Expand error:", err.response?.data || err.message)
+    res.status(500).json({ error: "Failed to expand tasks", detail: err.message })
   }
 })
 
 app.listen(port, () => {
-  console.log(`✅ MCP server running at http://localhost:${port}`)
+  console.log(`🚀 MCP server running at http://localhost:${port}`)
 })
