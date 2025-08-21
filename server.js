@@ -82,7 +82,7 @@ app.post('/mcp/expand-tasks', async (req, res) => {
   }
 })
 
-const port = process.env.PORT || 7000
+const port = process.env.PORT || 3000
 
 // 測試用 API
 app.get('/', (req, res) => {
