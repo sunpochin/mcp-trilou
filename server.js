@@ -89,6 +89,9 @@ app.get('/', (req, res) => {
   res.send('✅ MCP server is running!')
 })
 
+console.log('🟢 NODE_ENV:', process.env.NODE_ENV)
+console.log('🟢 PORT ENV:', process.env.PORT)
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 MCP server running at http://0.0.0.0:${port}`)
 })
