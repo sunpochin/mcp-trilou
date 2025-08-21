@@ -9,10 +9,7 @@ dotenv.config()
 if (!process.env.OPENAI_API_KEY) {
   console.error('❌ 沒有找到 OPENAI_API_KEY，請確認 .env 檔案正確')
   process.exit(1)
-} else {
-  console.log('✅ API KEY prefix:', process.env.OPENAI_API_KEY.slice(0, 10))
 }
-
 const app = express()
 const port = 8000 // <-- 改這裡
 app.use(bodyParser.json())
@@ -53,7 +50,7 @@ app.post('/mcp/expand-tasks', async (req, res) => {
 
   try {
     const llmResponse = await openai.chat.completions.create({
-      model: 'gpt‑4o mini ',
+      model: 'gpt‑4o-mini',
       messages: [{ role: 'user', content: prompt }],
     })
 
