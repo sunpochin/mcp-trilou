@@ -50,7 +50,7 @@ app.post('/mcp/expand-tasks', async (req, res) => {
 
   try {
     const llmResponse = await openai.chat.completions.create({
-      model: 'gpt‑4o-mini',
+      model: 'GPT-4o Mini',
       messages: [{ role: 'user', content: prompt }],
     })
 
