@@ -82,8 +82,13 @@ app.post('/mcp/expand-tasks', async (req, res) => {
   }
 })
 
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 7000
 
-app.listen(port, () => {
-  console.log(`🚀 MCP server running at http://localhost:${port}`)
+// 測試用 API
+app.get('/', (req, res) => {
+  res.send('✅ MCP server is running!')
+})
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 MCP server running at http://0.0.0.0:${port}`)
 })
