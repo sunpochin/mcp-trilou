@@ -1,16 +1,16 @@
-import express from "express"
-import bodyParser from "body-parser"
-import dotenv from "dotenv"
-import OpenAI from "openai"
+import express from 'express'
+import bodyParser from 'body-parser'
+import dotenv from 'dotenv'
+import OpenAI from 'openai'
 
 dotenv.config()
 
 // 檢查 API Key
 if (!process.env.OPENAI_API_KEY) {
-  console.error("❌ 沒有找到 OPENAI_API_KEY，請確認 .env 檔案正確")
+  console.error('❌ 沒有找到 OPENAI_API_KEY，請確認 .env 檔案正確')
   process.exit(1)
 } else {
-  console.log("✅ API KEY prefix:", process.env.OPENAI_API_KEY.slice(0, 10))
+  console.log('✅ API KEY prefix:', process.env.OPENAI_API_KEY.slice(0, 10))
 }
 
 const app = express()
@@ -21,7 +21,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-app.post("/mcp/expand-tasks", async (req, res) => {
+app.post('/mcp/expand-tasks', async (req, res) => {
   const { userInput } = req.body
 
   const prompt = `
@@ -43,9 +43,9 @@ app.post("/mcp/expand-tasks", async (req, res) => {
 
   範例：
   [
-    { "title": "繳交報告", "description": "明天截止的期末報告", "status": "urgent" },
-    { "title": "練習面試題", "description": "為下周面試準備", "status": "high" },
-    { "title": "整理筆記", "description": "複習上課內容", "status": "medium" }
+    { "title": "繳交報告", "description": "明天截止的期末報告，需要立即完成，否則會被當掉，立即開始準備吧。", "status": "urgent" },
+    { "title": "練習面試題", "description": "為下周面試準備，研讀各種教材，並且練習各種面試題目。跟同學互相討論，並且互相練習面試。", "status": "high" },
+    { "title": "整理筆記", "description": "複習上課內容，並且整理成筆記。跟同學組成小組，互相討論，並且互相練習面試。", "status": "medium" }
   ]
 
   用戶輸入：${userInput}
@@ -53,25 +53,27 @@ app.post("/mcp/expand-tasks", async (req, res) => {
 
   try {
     const llmResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
+      model: 'gpt‑4o mini ',
+      messages: [{ role: 'user', content: prompt }],
     })
 
     const raw = llmResponse.choices[0].message.content
-    console.log("📝 LLM raw output:", raw)
+    console.log('📝 LLM raw output:', raw)
 
     let cards = []
     try {
       cards = JSON.parse(raw)
     } catch (e) {
-      console.error("⚠️ JSON parse error:", e.message)
-      return res.status(500).json({ error: "Invalid JSON from LLM", raw })
+      console.error('⚠️ JSON parse error:', e.message)
+      return res.status(500).json({ error: 'Invalid JSON from LLM', raw })
     }
 
     res.json({ cards })
   } catch (err) {
-    console.error("❌ Expand error:", err.response?.data || err.message)
-    res.status(500).json({ error: "Failed to expand tasks", detail: err.message })
+    console.error('❌ Expand error:', err.response?.data || err.message)
+    res
+      .status(500)
+      .json({ error: 'Failed to expand tasks', detail: err.message })
   }
 })
 
