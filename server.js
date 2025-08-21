@@ -14,7 +14,6 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 const app = express()
-const port = 8000 // <-- 改這裡
 app.use(bodyParser.json())
 
 const openai = new OpenAI({
@@ -82,6 +81,8 @@ app.post('/mcp/expand-tasks', async (req, res) => {
       .json({ error: 'Failed to expand tasks', detail: err.message })
   }
 })
+
+const port = process.env.PORT || 8000
 
 app.listen(port, () => {
   console.log(`🚀 MCP server running at http://localhost:${port}`)
