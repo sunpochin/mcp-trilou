@@ -89,6 +89,10 @@ app.get('/', (req, res) => {
   res.send('✅ MCP server is running!')
 })
 
+app.get('/healthz', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
 console.log('🟢 NODE_ENV:', process.env.NODE_ENV)
 console.log('🟢 PORT ENV:', process.env.PORT)
 
